@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
+
     <context-param>
         <param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
         <param-value>0</param-value>
@@ -19,9 +20,14 @@
     </context-param>
 
     <context-param>
-        <param-name>javax.faces.ENABLE_WEBSOCKET_ENDPOINT</param-name>
+        <param-name>org.omnifaces.SOCKET_ENDPOINT_ENABLED</param-name>
         <param-value>true</param-value>
     </context-param>
+
+<!--    <context-param>-->
+<!--        <param-name>javax.faces.ENABLE_WEBSOCKET_ENDPOINT</param-name>-->
+<!--        <param-value>true</param-value>-->
+<!--    </context-param>-->
 
     <!--    <context-param>
      <param-name>javax.faces.DISABLE_FACESSERVLET_TO_XHTML</param-name>

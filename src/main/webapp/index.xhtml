@@ -3,75 +3,63 @@
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:jsf="http://xmlns.jcp.org/jsf"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:o="http://omnifaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
 >
 <h:head>
-    <title>JSF 2.3: Websocket Sample</title>
+    <title>Просмотр расписания по станции</title>
+    <h:outputStylesheet name="css/screen.css"/>
 </h:head>
 <h:body>
     <div>
-<!--        <h:form rendered="false">-->
-<!--            <h:inputHidden value="#{ajaxBean}"/>-->
-<!--        </h:form>-->
-        <h:dataTable var="row" value="#{scheduleService.getSchedule()}"
+        <input type="hidden" value="#{updateBean.onInit()}"/>
+        <h:dataTable var="row" value="#{scheduleRepository.getSchedule()}"
                      id="scheduleTable"
                      styleClass="simpletablestyle">
             <h:column>
-                <f:facet name="header">routeNumber</f:facet>
+                <f:facet name="header">Номер маршрута</f:facet>
                 #{row.routeNumber}
             </h:column>
             <h:column>
-                <f:facet name="header">routeName</f:facet>
+                <f:facet name="header">Название поезда</f:facet>
                 #{row.routeName}
             </h:column>
             <h:column>
-                <f:facet name="header">canceled</f:facet>
-                #{row.canceled}
-                <!--                <c:choose>-->
-                <!--                    <c:when test="#{row.canceled}">Отменен</c:when>-->
-                <!--                    <c:otherwise>Активен</c:otherwise>-->
-                <!--                </c:choose>-->
+                <f:facet name="header">Статус</f:facet>
+                #{row.getCanceled()}
             </h:column>
             <h:column>
-                <f:facet name="header">delay</f:facet>
-                #{row.delay}
+                <f:facet name="header">Задержка</f:facet>
+                #{row.getDelay()}
             </h:column>
             <h:column>
-                <f:facet name="header">arrival</f:facet>
+                <f:facet name="header">Прибытие</f:facet>
                 #{row.arrival}
             </h:column>
             <h:column>
-                <f:facet name="header">departure</f:facet>
+                <f:facet name="header">Отправление</f:facet>
                 #{row.departure}
             </h:column>
         </h:dataTable>
     </div>
-
-    <h:form id="form">
-        <h:commandButton
-                id="pushToAjaxChannel"
-                action="#{ajaxBean.pushToAjaxChannel()}"
-                value="pushToAjaxChannel">
-            <f:ajax/>
-        </h:commandButton>
-        <h:commandButton
-                id="pushToAjaxListenerChannel"
-                action="#{ajaxBean.pushToAjaxListenerChannel()}"
-                value="pushToAjaxListenerChannel">
-            <f:ajax/>
-        </h:commandButton>
-    </h:form>
+    <!--    <h:form id="form">-->
+    <!--        <h:commandButton-->
+    <!--                id="pushToChannel"-->
+    <!--                action="#{ajaxBean.pushToChannel()}"-->
+    <!--                value="pushToChannel">-->
+    <!--            <f:ajax/>-->
+    <!--        </h:commandButton>-->
+    <!--    </h:form>-->
+<!--    <h:form>-->
+<!--        <f:websocket channel="updateChannel" scope="session">-->
+<!--            <f:ajax event="updateEvent" render=":scheduleTable"/>-->
+<!--        </f:websocket>-->
+<!--    </h:form>-->
     <h:form>
-        <f:websocket channel="ajaxChannel" scope="view">
-            <f:ajax event="ajaxEvent" render=":scheduleTable"/>
-        </f:websocket>
+        <o:socket channel="updateChannel" onmessage="someCommandScript" scope="session"/>
+        <o:commandScript name="someCommandScript" render=":scheduleTable"/>
     </h:form>
-    <h:form>
-        <f:websocket channel="ajaxListenerChannel" scope="view">
-            <f:ajax event="ajaxListenerEvent" listener="#{ajaxBean.ajaxPushed}" render=":scheduleTable"/>
-        </f:websocket>
-    </h:form>
-
 </h:body>
 </html>
