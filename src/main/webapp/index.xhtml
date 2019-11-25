@@ -9,17 +9,22 @@
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
 >
 <h:head>
-    <title>Просмотр расписания по станции</title>
-    <h:outputStylesheet name="css/screen.css"/>
+<!--    <h:outputStylesheet name="css/screen.css"/>-->
+    <h:outputStylesheet name="css/style.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab&amp;display=swap" rel="stylesheet"/>
+    <title>Электронное табло</title>
 </h:head>
 <h:body>
-    <div>
+    <div class="main">
+        <h1>Расписание поездов </h1>
+        <h4>Cтанция: #{scheduleRepository.station.getName()}, сегодня: #{scheduleRepository.date} </h4>
         <input type="hidden" value="#{updateBean.onInit()}"/>
         <h:dataTable var="row" value="#{scheduleRepository.getSchedule()}"
                      id="scheduleTable"
                      styleClass="simpletablestyle">
             <h:column>
-                <f:facet name="header">Номер маршрута</f:facet>
+                <f:facet name="header">Маршрут</f:facet>
                 #{row.routeNumber}
             </h:column>
             <h:column>
@@ -31,7 +36,7 @@
                 #{row.getCanceled()}
             </h:column>
             <h:column>
-                <f:facet name="header">Задержка</f:facet>
+                <f:facet name="header">Опоздание</f:facet>
                 #{row.getDelay()}
             </h:column>
             <h:column>
@@ -43,6 +48,10 @@
                 #{row.departure}
             </h:column>
         </h:dataTable>
+        <h:form>
+            <o:socket channel="updateChannel" onmessage="someCommandScript" scope="session"/>
+            <o:commandScript name="someCommandScript" render=":scheduleTable"/>
+        </h:form>
     </div>
     <!--    <h:form id="form">-->
     <!--        <h:commandButton-->
@@ -57,9 +66,6 @@
 <!--            <f:ajax event="updateEvent" render=":scheduleTable"/>-->
 <!--        </f:websocket>-->
 <!--    </h:form>-->
-    <h:form>
-        <o:socket channel="updateChannel" onmessage="someCommandScript" scope="session"/>
-        <o:commandScript name="someCommandScript" render=":scheduleTable"/>
-    </h:form>
+
 </h:body>
 </html>

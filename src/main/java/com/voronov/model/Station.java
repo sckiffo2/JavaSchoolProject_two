@@ -14,4 +14,8 @@ public class Station {
 	private long id;
 
 	private String name;
+
+	public Station(long id) {
+		this.id = id;
+	}
 }

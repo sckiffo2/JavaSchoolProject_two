@@ -27,6 +27,8 @@ public class ScheduleRowDto implements Comparable<ScheduleRowDto>{
 
 	private String departure;
 
+	private String stationName;
+
 	public String getCanceled() {
 		return canceled ? "отменен" : "активен";
 	}

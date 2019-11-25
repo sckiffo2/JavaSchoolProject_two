@@ -4,8 +4,16 @@
     box-sizing: border-box;
 }
 
+html {
+    height: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background: linear-gradient(#666F8A, #d6d6d6) no-repeat;
+}
+
 body {
-    background: linear-gradient(grey, #d6d6d6);
     font-family: 'Roboto Slab', serif;
 }
 
@@ -32,7 +40,7 @@ thead th {
     font-size: 16px;
     font-weight: 400;
     color: #fff;
-    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
     text-align: left;
     padding: 20px;
     background-size: 100%;
@@ -84,6 +92,14 @@ h1 {
     text-align: center;
     font-family: 'Press Start 2P', cursive;
     font-size: 1.5em;
-    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+    padding-top: 20px;
+}
+h4 {
+    color: white;
+    text-align: center;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1em;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
     padding-top: 20px;
 }

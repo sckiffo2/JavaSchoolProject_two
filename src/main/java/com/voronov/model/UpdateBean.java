@@ -3,6 +3,7 @@ package com.voronov.model;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.omnifaces.cdi.Push;
 import org.omnifaces.cdi.PushContext;
+import org.omnifaces.cdi.Startup;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -16,7 +17,6 @@ import java.io.Serializable;
 public class UpdateBean implements Serializable, javax.jms.MessageListener{
 
 	@Inject
-	@Push
 	PushContext updateChannel;
 
 	private Connection connection;

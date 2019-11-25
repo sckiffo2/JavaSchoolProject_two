@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -17,14 +18,14 @@ import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 
-//@Named("scheduleRepository")
 @Singleton
 @Startup
 @Getter
@@ -33,9 +34,26 @@ import java.util.List;
 @ManagedBean(name = "scheduleRepository")
 public class ScheduleRepository implements Serializable {
 
-	private Station station = new Station(1L,"Москва");
+	private Station station = new Station(1L);
 
 	private List<ScheduleRowDto> schedule;
+
+	private String date = LocalDate.now().toString();
+
+	@PostConstruct
+	private void onInit() {
+		try {
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			InputStream input = classLoader.getResourceAsStream("app.properties");
+			Properties properties = new Properties();
+			properties.load(input);
+			long id = Long.parseLong(properties.getProperty("stationId"));
+			station = new Station(id);
+			System.out.println(station.getId());
+		} catch (IOException e) {
+		}
+		System.out.println("ScheduleRepository postConstruct");
+	}
 
 	@Produces
 	@Named
@@ -51,8 +69,29 @@ public class ScheduleRepository implements Serializable {
 				.get(ClientResponse.class);
 
 		ScheduleRowDto[] res = response.getEntity(ScheduleRowDto[].class);
+		station.setName(res[0].getStationName());
 		schedule = new ArrayList<>(Arrays.asList(res));
 		Collections.sort(schedule);
 		return schedule;
+	}
+
+	public Station getStation() {
+		String requestUrl = "http://localhost:8081/AnyWayTicket/getStation?id=" + station.getId();
+		ClientResponse response = webClient(requestUrl);
+		station = response.getEntity(Station.class);
+		return station;
+	}
+
+	private ClientResponse webClient(String url) {
+		ClientConfig clientConfig = new DefaultClientConfig();
+		clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
+
+		Client client = Client.create(clientConfig);
+		WebResource webResource = client.resource(url);
+		ClientResponse response = webResource
+				.accept(MediaType.APPLICATION_JSON)
+				.type(MediaType.APPLICATION_JSON)
+				.get(ClientResponse.class);
+		return response;
 	}
 }
