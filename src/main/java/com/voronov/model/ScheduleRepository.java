@@ -9,6 +9,7 @@ import com.sun.jersey.api.json.JSONConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -25,7 +26,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
 
-
+@Log4j
 @Singleton
 @Startup
 @Getter
@@ -49,25 +50,17 @@ public class ScheduleRepository implements Serializable {
 			properties.load(input);
 			long id = Long.parseLong(properties.getProperty("stationId"));
 			station = new Station(id);
-			System.out.println(station.getId());
+			log.info("scheduleRepository created");
+			log.info("getting station id from properties. id = " + id);
 		} catch (IOException e) {
 		}
-		System.out.println("ScheduleRepository postConstruct");
 	}
 
 	@Produces
 	@Named
 	public List<ScheduleRowDto> getSchedule() {
-		ClientConfig clientConfig = new DefaultClientConfig();
-		clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
-
-		Client client = Client.create(clientConfig);
-		WebResource webResource = client.resource("http://localhost:8081/AnyWayTicket/getSchedule?id=" + station.getId());
-		ClientResponse response = webResource
-				.accept(MediaType.APPLICATION_JSON)
-				.type(MediaType.APPLICATION_JSON)
-				.get(ClientResponse.class);
-
+		String requestUrl = "http://localhost:8081/AnyWayTicket/getSchedule?id=" + station.getId();
+		ClientResponse response = webClient(requestUrl);
 		ScheduleRowDto[] res = response.getEntity(ScheduleRowDto[].class);
 		station.setName(res[0].getStationName());
 		schedule = new ArrayList<>(Arrays.asList(res));
@@ -79,6 +72,7 @@ public class ScheduleRepository implements Serializable {
 		String requestUrl = "http://localhost:8081/AnyWayTicket/getStation?id=" + station.getId();
 		ClientResponse response = webClient(requestUrl);
 		station = response.getEntity(Station.class);
+		log.info("getting station:" + station.getId() + " " + station.getName());
 		return station;
 	}
 
